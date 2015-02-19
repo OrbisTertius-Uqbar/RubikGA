@@ -25,7 +25,6 @@ class Face:
         self.face[row] = newRow
 
 
-## standard config "g","b", "w", "y", "o", "r"
 class Cube:
 
     GREEN = "g"
@@ -137,18 +136,20 @@ class Cube:
         if clockwise==True:
             print "moving right clockwise..."
             self.pastMoves +=["r"]
-            hold = self.U.getColumn(2)
-            self.U.setColumn(2,self.B.getColumn(2))
-            self.B.setColumn(2,self.D.getColumn(2))
-            self.D.setColumn(2, self.F.getColumn(2))
-            self.F.setColumn(2,hold)
-        else:
-            print "moving right counter-clockwise"
-            self.pastMoves += ["r'"]
             hold = self.D.getColumn(2)
             self.D.setColumn(2,self.B.getColumn(2))
             self.B.setColumn(2,self.U.getColumn(2))
             self.U.setColumn(2,self.F.getColumn(2))
+
+        else:
+            print "moving right counter-clockwise"
+            self.pastMoves += ["r'"]
+
+            self.F.setColumn(2,hold)
+            hold = self.U.getColumn(2)
+            self.U.setColumn(2,self.B.getColumn(2))
+            self.B.setColumn(2,self.D.getColumn(2))
+            self.D.setColumn(2, self.F.getColumn(2))
             self.F.setColumn(2,hold)
 
 
