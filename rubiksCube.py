@@ -26,7 +26,6 @@ class Face:
 
 
 ## standard config "g","b", "w", "y", "o", "r"
-## uses convention (that i just made up...) in which [0][x] index refers to the side closest to F. for opposite side, indices are the same
 class Cube:
 
     GREEN = "g"
@@ -76,6 +75,7 @@ class Cube:
         movesMap = {"f":self.f,"b":self.b, "u": self.u, "d":self.d,"r":self.r, "l":self.l}
         for move in reversed(self.pastMoves):
             movesMap[move[0]]() if len(move) == 2 else movesMap[move[0]](False)
+            self.clearMoves()
 
 
     # move front, and so on...
@@ -83,55 +83,108 @@ class Cube:
         if clockwise==True:
             self.pastMoves += ["f"]
             print "moving front clockwise..."
-            hold = [self.R.face[i][0] for i in range(3)]
-            self.R.face[0][0]=self.U.face[0][0]
-            self.R.face[1][0]=self.U.face[0][1]
-            self.R.face[2][0]=self.U.face[0][2]
+            hold = self.R.getColumn(0)
+            self.R.setColumn(0, self.U.getRow(2))
+            self.U.setRow(2, self.L.getColumn(2))
+            self.L.setColumn(2, self.D.getRow(0))
+            self.D.setRow(0,hold)
 
-            self.U.face[0][0]=self.L.face[0][2]
-            self.U.face[0][1]=self.L.face[1][2]
-            self.U.face[0][2]=self.L.face[2][2]
-
-            self.L.face[0][2]=self.D.face[2][0]
-            self.L.face[1][2]=self.D.face[2][1]
-            self.L.face[2][2]=self.D.face[2][2]
-
-            self.D.face[2]=hold
         else:
             self.pastMoves += ["f'"]
             print "moving front counter-clockwise..."
-            hold = [self.L.face[i][0] for i in range(3)]
+            hold = self.L.getColumn(2)
+            self.L.setColumn(2, self.U.getRow(2))
+            self.U.setRow(2, self.R.getColumn(0))
+            self.R.setColumn(0, self.D.getRow(0))
+            self.D.setRow(0, hold)
 
-            self.L.face[0][2]=self.U.face[0][2]
-            self.L.face[1][2]=self.U.face[1][2]
-            self.L.face[2][2]=self.U.face[2][2]
-
-            self.U.face[0][0]=self.R.face[0][2]
-            self.U.face[0][1]=self.R.face[1][2]
-            self.U.face[0][2]=self.R.face[2][2]
-
-            self.R.face[0][2]=self.D.face[0][0]
-            self.R.face[1][2]=self.D.face[1][0]
-            self.R.face[2][2]=self.D.face[2][0]
-
-            self.D.face[2]=hold
-
-
-
-def play():
-    c = Cube()
-    moves = {"f":c.f,"b":c.b,"u":c.u,"d":c.d, "l":c.l,"r":c.r}
-    while True:
-        move = raw_input("Enter next move: ")
-        if move=="quit":
-            print"You've given up..."
-            break
-        if move == "scramble":
-            n = input("How many moves? ")
-            c.scrambleCube(n)
-
-        if move == "" or move[0] not in moves:
-            print "Invalid move."
+    def b(self, clockwise=True):
+        if clockwise==True:
+            print "moving back clockwise..."
+            self.pastMoves +=["b"]
+            hold = self.R.getColumn(2)
+            self.R.setColumn(2,self.D.getRow(2))
+            self.D.setRow(2, self.L.getColumn(0))
+            self.L.setColumn(0,self.U.getRow(0))
+            self.U.setRow(0,hold)
         else:
-            moves[move[0]]() if len(move)==1 else moves[move[0]](False)
-            print c
+            print "moving back counter-clockwise"
+            self.pastMoves += ["b'"]
+            hold = self.L.getColumn(0)
+            self.L.setColumn(0,self.D.getRow(2))
+            self.D.setRow(2, self.R.getColumn(2))
+            self.R.setColumn(2,self.U.getRow(0))
+            self.U.setRow(0,hold)
+
+    def l(self, clockwise=True):
+        if clockwise==True:
+            print "moving left clockwise..."
+            self.pastMoves +=["l"]
+            hold = self.U.getColumn(0)
+            self.U.setColumn(0,self.B.getColumn(0))
+            self.B.setColumn(0,self.D.getColumn(0))
+            self.D.setColumn(0, self.F.getColumn(0))
+            self.F.setColumn(0,hold)
+        else:
+            print "moving left counter-clockwise"
+            self.pastMoves += ["l'"]
+            hold = self.D.getColumn(0)
+            self.D.setColumn(0, self.B.getColumn(0))
+            self.B.setColumn(0 ,self.U.getColumn(0))
+            self.U.setColumn(0,self.F.getColumn(0))
+            self.F.setColumn(0,hold)
+
+    def r(self, clockwise=True):
+        if clockwise==True:
+            print "moving right clockwise..."
+            self.pastMoves +=["r"]
+            hold = self.U.getColumn(2)
+            self.U.setColumn(2,self.B.getColumn(2))
+            self.B.setColumn(2,self.D.getColumn(2))
+            self.D.setColumn(2, self.F.getColumn(2))
+            self.F.setColumn(2,hold)
+        else:
+            print "moving right counter-clockwise"
+            self.pastMoves += ["r'"]
+            hold = self.D.getColumn(2)
+            self.D.setColumn(2,self.B.getColumn(2))
+            self.B.setColumn(2,self.U.getColumn(2))
+            self.U.setColumn(2,self.F.getColumn(2))
+            self.F.setColumn(2,hold)
+
+
+    def d(self, clockwise=True):
+        if clockwise==True:
+            print "moving down clockwise..."
+            self.pastMoves +=["d"]
+            hold = self.R.getRow(2)
+            self.R.setRow(2,self.F.getRow(2))
+            self.F.setRow(2,self.L.getRow(2))
+            self.L.setRow(2, self.B.getRow(2))
+            self.B.setRow(2,hold)
+        else:
+            print "moving down counter-clockwise"
+            self.pastMoves += ["d'"]
+            hold = self.L.getRow(2)
+            self.L.setRow(2, self.F.getRow(2))
+            self.F.setRow(2,self.R.getRow(2))
+            self.R.setRow(2,self.B.getRow(2))
+            self.B.setRow(2,hold)
+
+    def u(self, clockwise=True):
+        if clockwise==True:
+            print "moving up clockwise..."
+            self.pastMoves +=["u"]
+            hold = self.R.getRow(0)
+            self.R.setRow(0,self.F.getRow(0))
+            self.F.setRow(0,self.L.getRow(0))
+            self.L.setRow(0, self.B.getRow(0))
+            self.B.setRow(0,hold)
+        else:
+            print "moving back counter-clockwise"
+            self.pastMoves += ["u'"]
+            hold = self.L.getRow(0)
+            self.L.setRow(0, self.F.getRow(0))
+            self.F.setRow(0,self.R.getRow(0))
+            self.R.setRow(0,self.B.getRow(0))
+            self.B.setRow(0,hold)

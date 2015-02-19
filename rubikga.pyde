@@ -62,7 +62,8 @@ def draw():
 
     # top
     pushMatrix()
-    rotateX(-HALF_PI)
+    translate(0, 0, -200)
+    rotateX(HALF_PI)
     drawFace(c.U)
     popMatrix()
 
@@ -75,8 +76,8 @@ def draw():
 
     # bottom
     pushMatrix()
-    translate(0, 200, -200)
-    rotateX(HALF_PI)
+    translate(0, 200, 0)
+    rotateX(-HALF_PI)
     drawFace(c.D)
     popMatrix()
 
@@ -92,11 +93,10 @@ def draw():
 def keyPressed():
         if  key == "f":
             c.f()
-            redraw()
+            print key
 
         elif  key == "F":
             c.f(False)
-            redraw()
 
         elif key == "b":
             c.b()
