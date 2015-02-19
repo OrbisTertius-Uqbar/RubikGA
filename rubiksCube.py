@@ -69,7 +69,6 @@ class Cube:
         directions = [True, False]
         for i in range(n):
             random.choice(moves)(random.choice(directions))
-            print self
 
     def solveCube(self):
         movesMap = {"f":self.f,"b":self.b, "u": self.u, "d":self.d,"r":self.r, "l":self.l}
