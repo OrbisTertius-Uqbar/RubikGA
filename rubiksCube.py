@@ -152,17 +152,18 @@ class Cube:
         elif side is self.SIDE_RIGHT:
             if clockwise==True:
                 print "moving right clockwise..."
-                hold = self.top.getColumn(2)
-                self.top.setColumn(2,self.back.getColumn(2))
-                self.back.setColumn(2,self.bottom.getColumn(2))
-                self.bottom.setColumn(2, self.front.getColumn(2))
-                self.front.setColumn(2,hold)
-            else:
-                print "moving right counter-clockwise"
                 hold = self.bottom.getColumn(2)
                 self.bottom.setColumn(2,self.back.getColumn(2))
                 self.back.setColumn(2,self.top.getColumn(2))
                 self.top.setColumn(2,self.front.getColumn(2))
+                self.front.setColumn(2,hold)
+
+            else:
+                print "moving right counter-clockwise"
+                hold = self.top.getColumn(2)
+                self.top.setColumn(2,self.back.getColumn(2))
+                self.back.setColumn(2,self.bottom.getColumn(2))
+                self.bottom.setColumn(2, self.front.getColumn(2))
                 self.front.setColumn(2,hold)
 
 
