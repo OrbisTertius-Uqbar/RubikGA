@@ -1,6 +1,7 @@
 import random
 
 class Face:
+
     def __init__(self,c):
         self.face = [[c]*3 for i in range(3)]
 
@@ -9,13 +10,39 @@ class Face:
         m = self.face[1]
         b = self.face[2]
         return str(t) + "\n" + str(m) + "\n" + str(b)
-    
+
+    def getColumn(self, col):
+        return [self.face[r][col] for r in range(3)]
+
+    def getRow(self, row):
+        return self.face[row]
+
+    def setColumn(self, col, newCol):
+        for row in range(3):
+            self.face[row][col] = newCol[row]
+
+    def setRow(self, row, newRow):
+        self.face[row] = newRow
 
 
 ## standard config "g","b", "w", "y", "o", "r"
 ## uses convention (that i just made up...) in which [0][x] index refers to the side closest to F. for opposite side, indices are the same
 class Cube:
-    def __init__(self,F="g",B="b",U="w",D="y",L="o",R="r"):
+
+    GREEN = "g"
+    BLUE = "b"
+    WHITE = "w"
+    YELLOW = "y"
+    ORANGE = "o"
+    RED = "r"
+
+    def __init__(self,
+        F=GREEN,
+        B=BLUE,
+        U=WHITE,
+        D=YELLOW,
+        L=ORANGE,
+        R=RED):
 
         self.F = Face(F)
         self.B = Face(B)
@@ -59,7 +86,7 @@ class Cube:
             self.R.face[0][0]=self.U.face[0][0]
             self.R.face[1][0]=self.U.face[0][1]
             self.R.face[2][0]=self.U.face[0][2]
-            
+
             self.U.face[0][0]=self.L.face[0][2]
             self.U.face[0][1]=self.L.face[1][2]
             self.U.face[0][2]=self.L.face[2][2]
@@ -67,7 +94,7 @@ class Cube:
             self.L.face[0][2]=self.D.face[2][0]
             self.L.face[1][2]=self.D.face[2][1]
             self.L.face[2][2]=self.D.face[2][2]
-            
+
             self.D.face[2]=hold
         else:
             self.pastMoves += ["f'"]
@@ -77,15 +104,15 @@ class Cube:
             self.L.face[0][2]=self.U.face[0][2]
             self.L.face[1][2]=self.U.face[1][2]
             self.L.face[2][2]=self.U.face[2][2]
-            
+
             self.U.face[0][0]=self.R.face[0][2]
             self.U.face[0][1]=self.R.face[1][2]
             self.U.face[0][2]=self.R.face[2][2]
-            
+
             self.R.face[0][2]=self.D.face[0][0]
             self.R.face[1][2]=self.D.face[1][0]
             self.R.face[2][2]=self.D.face[2][0]
-            
+
             self.D.face[2]=hold
 
     def b(self, clockwise=True):
@@ -96,7 +123,7 @@ class Cube:
             self.D.face[0][0]=self.L.face[0][0]
             self.D.face[0][1]=self.L.face[1][0]
             self.D.face[0][2]=self.L.face[2][0]
-            
+
             self.L.face[0][0]=self.U.face[0][0]
             self.L.face[1][0]=self.U.face[0][1]
             self.L.face[2][0]=self.U.face[0][2]
@@ -104,8 +131,8 @@ class Cube:
             self.U.face[2][0]=self.R.face[0][2]
             self.U.face[2][1]=self.R.face[1][2]
             self.U.face[2][2]=self.R.face[2][2]
-            
-            
+
+
             self.R.face[0][2]=hold[0]
             self.R.face[1][2]=hold[1]
             self.R.face[2][2]=hold[2]
@@ -270,5 +297,3 @@ def play():
         else:
             moves[move[0]]() if len(move)==1 else moves[move[0]](False)
             print c
-
-

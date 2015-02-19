@@ -1,6 +1,6 @@
-import rubiksCube
+from rubiksCube import Cube
 
-c = rubiksCube.Cube()
+c = Cube()
 
 def setup():
     size(400, 400, OPENGL)
@@ -20,20 +20,20 @@ def drawFace(f):
 
 ## converts string to rgb vals
 def getColor(c):
-    if c == "r":
+    if c == Cube.RED:
         return 250, 0, 0
-    if c == "g":
+    if c == Cube.GREEN:
         return 0, 250, 0
-    if c == "o":
+    if c == Cube.ORANGE:
         return 252, 113, 20
-    if c == "b":
+    if c == Cube.BLUE:
         return 0, 0, 250
-    if c == "y":
+    if c == Cube.YELLOW:
         return 250, 237, 28
-    if c == "w":
+    if c == Cube.WHITE:
         return 250, 250, 250
-    
-    
+
+
 
 def draw():
     rotationY = mouseX / (float(width) / 2) * TWO_PI
@@ -88,7 +88,7 @@ def draw():
     popMatrix()
 
     popMatrix()
-    
+
 def keyPressed():
         if  key == "f":
             c.f()
@@ -114,8 +114,8 @@ def keyPressed():
             c.r()
             redraw()
         elif key == "R":
-            c.r(False) 
-            redraw()           
+            c.r(False)
+            redraw()
         elif key == "u":
             c.u()
             redraw()
@@ -134,7 +134,3 @@ def keyPressed():
         elif  key == "c":
             c.solveCube()
             redraw()
-    
-
-
-
