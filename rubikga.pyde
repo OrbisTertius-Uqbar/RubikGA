@@ -1,41 +1,43 @@
 from rubiksCube import Cube
+import math
 
 c = Cube()
 
+canvasSize = 600
+cubeSize = math.floor(math.sqrt((canvasSize ** 2) / 2)) * 2
+
 def setup():
-    size(400, 400, OPENGL)
+    size(canvasSize, canvasSize, OPENGL)
+
 
 def drawFace(f):
-    # build face
-    x = 0
-    y = 0
-    for i in range(3):
-        for j in range(3):
-            r,g,b=getColor(f.face[i][j])
-            fill(r,g,b)
-            rect(x, y, 200 / 3., 200 / 3.)
-            x += 200 / 3.
+    x, y = (0, 0)
+    for row in range(3):
+        for col in range(3):
+            fill( getColor( f.face[row][col] ) )
+            rect(x, y, cubeSize / 3., cubeSize / 3.)
+            x += cubeSize / 3.
         x = 0
-        y += 200 / 3.
+        y += cubeSize / 3.
 
-## converts string to rgb vals
+# Converts Cube.COLOR to processing color
 def getColor(c):
     if c == Cube.RED:
-        return 250, 0, 0
+        return color(250, 0, 0)
     if c == Cube.GREEN:
-        return 0, 250, 0
+        return color(0, 250, 0)
     if c == Cube.ORANGE:
-        return 252, 113, 20
+        return color(252, 113, 20)
     if c == Cube.BLUE:
-        return 0, 0, 250
+        return color(0, 0, 250)
     if c == Cube.YELLOW:
-        return 250, 237, 28
+        return color(250, 237, 28)
     if c == Cube.WHITE:
-        return 250, 250, 250
-
+        return color(250, 250, 250)
 
 
 def draw():
+
     rotationY = mouseX / (float(width) / 2) * TWO_PI
     rotationX = mouseY / (float(height) / 2) * TWO_PI * -1
 
@@ -43,94 +45,112 @@ def draw():
 
     rectMode(CORNER)
 
-    translate(200, 200, -100)
+    halfCubeSize = cubeSize / 2
+
+    translate(canvasSize / 2, canvasSize / 2, -1.3 * cubeSize)
     rotateY(rotationY)
     rotateX(rotationX)
 
     pushMatrix()
-    translate(-100, -100, 100)
+    translate(-halfCubeSize, -halfCubeSize, halfCubeSize)
 
     # front
-    drawFace(c.F)
+    drawFace(c.front)
 
     # left
     pushMatrix()
-    translate(0, 0, -200)
+    translate(0, 0, -cubeSize)
     rotateY(-HALF_PI)
-    drawFace(c.L)
+    drawFace(c.left)
     popMatrix()
 
     # top
     pushMatrix()
-    translate(0, 0, -200)
+    translate(0, 0, -cubeSize)
     rotateX(HALF_PI)
-    drawFace(c.U)
+    drawFace(c.top)
     popMatrix()
 
     # right
     pushMatrix()
-    translate(200, 0, 0)
+    translate(cubeSize, 0, 0)
     rotateY(HALF_PI)
-    drawFace(c.R)
+    drawFace(c.right)
     popMatrix()
 
     # bottom
     pushMatrix()
-    translate(0, 200, 0)
+    translate(0, cubeSize, 0)
     rotateX(-HALF_PI)
-    drawFace(c.D)
+    drawFace(c.bottom)
     popMatrix()
 
     # back
     pushMatrix()
-    translate(0, 0, -200)
+    translate(0, 0, -cubeSize)
     rotateX(TWO_PI)
-    drawFace(c.B)
+    drawFace(c.back)
     popMatrix()
 
     popMatrix()
+
 
 def keyPressed():
+
+        clockwise = True
+        side = None
+
         if  key == "f":
-            c.f()
-            print key
+            side = Cube.SIDE_FRONT
 
         elif  key == "F":
-            c.f(False)
+            side = Cube.SIDE_FRONT
+            clockwise = False
 
         elif key == "b":
-            c.b()
-            redraw()
+            side = Cube.SIDE_BACK
+
         elif key == "B":
-            c.b(False)
-            redraw()
+            side = Cube.SIDE_BACK
+            clockwise = False
+
         elif key == "l":
-            c.l()
-            redraw()
+            side = Cube.SIDE_LEFT
+
         elif key == "L":
-            c.l(False)
-            redraw()
+            side = Cube.SIDE_LEFT
+            clockwise = False
+
         elif key == "r":
-            c.r()
-            redraw()
+            side = Cube.SIDE_RIGHT
+
         elif key == "R":
-            c.r(False)
-            redraw()
-        elif key == "u":
-            c.u()
-            redraw()
-        elif key == "U":
-            c.u(False)
-            redraw()
+            side = Cube.SIDE_RIGHT
+            clockwise = False
+
+        elif key == "u" or key == "t":
+            side = Cube.SIDE_TOP
+
+        elif key == "U" or key == "T":
+            side = Cube.SIDE_TOP
+            clockwise = False
+
         elif key == "d":
-            c.d()
-            redraw()
+            side = Cube.SIDE_BOTTOM
+
         elif key == "D":
-            c.d(False)
-            redraw()
-        elif key == "s":
+            side = Cube.SIDE_BOTTOM
+            clockwise = False
+
+        if side != None:
+            c.move(side, clockwise)
+            return
+
+
+        # Otherwise...
+
+        if key == "s":
             c.scrambleCube(50)
-            redraw()
+
         elif  key == "c":
             c.solveCube()
-            redraw()
