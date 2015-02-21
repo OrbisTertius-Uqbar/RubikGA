@@ -22,6 +22,7 @@ class Genome:
 
     def setChild(self, i, child):
         self._children[i] = child
+        child.parent = self
 
     def getParent(self):
         return self._parent
@@ -45,8 +46,8 @@ class Genome:
 
     def replaceSubtree(self, toReplace, newSubtree):
 
-        parent = toReplace.parent
-        parent.setChild(parent.index(toReplace), newSubtree)
+        parent = toReplace.getParent()
+        parent.setChild(parent._children.index(toReplace), newSubtree)
 
 
     def __iter__(self):
@@ -63,7 +64,7 @@ class Genome:
         def next(self):
 
             if self.first:
-                self.stack.push((self.genome, 0))
+                self.stack.append((self.genome, 0))
                 self.first = False
                 return self.genome
 
@@ -73,7 +74,7 @@ class Genome:
                 if index < parent.childCount:
                     child = parent.getChild(index)
                     self.stack[-1] = (parent, index + 1)
-                    self.stack.push((child, 0))
+                    self.stack.append((child, 0))
                     return child
 
                 else:
