@@ -1,7 +1,7 @@
 import random
 import math
 
-class GA:
+class GA(object):
 
     # Constants
 
@@ -110,14 +110,16 @@ class GA:
 
     def useRandomPopulation(self):
 
-        self.setPopulation([self.randomGenome() for i in range(self.populationSize)])
+        self.setPopulation([
+            self.randomGenome() for i in range(self.populationSize)]
+        )
 
 
     def run(self, generations=1):
 
         for generation in range(generations):
 
-            if len(self.population) is 0:
+            if len(self.population) == 0:
 
                 self.useRandomPopulation()
 
