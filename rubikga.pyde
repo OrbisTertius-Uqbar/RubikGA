@@ -68,7 +68,7 @@ def draw():
     pushMatrix()
     translate(0, 0, -cubeSize)
     rotateX(HALF_PI)
-    drawFace(c.top)
+    drawFace(c.up)
     popMatrix()
 
     # right
@@ -82,7 +82,7 @@ def draw():
     pushMatrix()
     translate(0, cubeSize, 0)
     rotateX(-HALF_PI)
-    drawFace(c.bottom)
+    drawFace(c.down)
     popMatrix()
 
     # back
@@ -129,17 +129,17 @@ def keyPressed():
             clockwise = False
 
         elif key == "u" or key == "t":
-            side = Cube.SIDE_TOP
+            side = Cube.SIDE_UP
 
         elif key == "U" or key == "T":
-            side = Cube.SIDE_TOP
+            side = Cube.SIDE_UP
             clockwise = False
 
         elif key == "d":
-            side = Cube.SIDE_BOTTOM
+            side = Cube.SIDE_DOWN
 
         elif key == "D":
-            side = Cube.SIDE_BOTTOM
+            side = Cube.SIDE_DOWN
             clockwise = False
 
         if side != None:
