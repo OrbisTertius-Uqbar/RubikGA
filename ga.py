@@ -6,6 +6,8 @@ class GA(object):
     # Constants
 
     SELECTION_ROULETTE = 0
+    SELECTION_RANK = 1
+
 
     # Config
 
@@ -14,16 +16,21 @@ class GA(object):
     crossoverRate = 1.0
     mutationRate = 0.005
     populationSize = 100
-    selectionMethod = SELECTION_ROULETTE
     fitnessFunciton = lambda genome: 0
+    selectionMethod = SELECTION_RANK
+    elitism = 0
 
 
     # State
 
-    population = []
-    fitnesses = []
-    maxFitness = 0
-    avgFitness = 0
+    _population = []
+    _fitnesses = None
+    _ranks = None
+    _maxFitness = None
+    _avgFitness = None
+
+    _populationByFitness = None
+    _elite = None
 
 
     # Helpers
@@ -74,22 +81,83 @@ class GA(object):
 
     def selectPair(self):
 
-        if self.selectionMethod == self.SELECTION_ROULETTE:
+        weights = None
 
+        if self.selectionMethod == self.SELECTION_ROULETTE:
+            weights = self.fitnesses
+
+        elif self.selectionMethod == self.SELECTION_RANK:
+            weights = self.ranks
+
+        if weights != None:
             return (
-                self._weightedChoice(self.population, self.fitnesses),
-                self._weightedChoice(self.population, self.fitnesses)
+                self._weightedChoice(self.population, weights),
+                self._weightedChoice(self.population, weights)
             )
 
 
-    # Methods
+    # Properties
 
-    def setPopulation(self, population):
+    @property
+    def population(self):
+        return self._population
 
-        self.population = population
-        self.fitnesses = [self.fitnessFunction(genome) for genome in population]
-        self.maxFitness = max(self.fitnesses)
-        self.avgFitness = float(sum(self.fitnesses)) / len(self.fitnesses)
+    @population.setter
+    def population(self, population):
+        self._population = population
+        self._fitnesses = None
+        self._maxFitness = None
+        self._avgFitness = None
+        self._ranks = None
+        self._populationByFitness = None
+        self._elite = None
+
+    @property
+    def fitnesses(self):
+        if self._fitnesses == None:
+            self._fitnesses = [self.fitnessFunction(g) for g in self.population]
+        return self._fitnesses
+
+    @property
+    def maxFitness(self):
+        if self._maxFitness == None:
+            self._maxFitness = max(self.fitnesses)
+        return self._maxFitness
+
+    @property
+    def avgFitness(self):
+        if self._avgFitness == None:
+            self._avgFitness = float(sum(self.fitnesses)) / len(self.fitnesses)
+        return self._avgFitness
+
+    @property
+    def ranks(self):
+        if self._ranks == None:
+            orderedByRank = self.populationByFitness
+            self._ranks = [orderedByRank.index(g) + 1 for g in self.population]
+        return self._ranks
+
+    @property
+    def populationByFitness(self):
+        if self._populationByFitness == None:
+            tuples = [(g, self.fitnessForGenome(g)) for g in self.population]
+            tuples.sort(
+                lambda a, b: 1 if a[1] > b[1] else -1 if a[1] < b[1] else 0
+            )
+            self._populationByFitness = [g for (g, fitnessValue) in tuples]
+        return self._populationByFitness
+
+    @property
+    def elite(self):
+        if self._elite == None:
+            c = int(round(self.populationSize * self.elitism))
+            if c % 2 == 1: c += 1
+            c = min([c, self.populationSize])
+            if c == 0:
+                self._elite = []
+            else:
+                self._elite = self.populationByFitness[-c:]
+        return self._elite
 
 
     def genomeForFitness(self, fitness):
@@ -108,11 +176,13 @@ class GA(object):
             return None
 
 
+    # Methods
+
     def useRandomPopulation(self):
 
-        self.setPopulation([
-            self.randomGenome() for i in range(self.populationSize)]
-        )
+        self.population = [
+            self.randomGenome() for i in range(self.populationSize)
+        ]
 
 
     def run(self, generations=1):
@@ -125,9 +195,9 @@ class GA(object):
 
             else:
 
-                newPopulation = []
+                newPopulation = [g for g in self.elite]
 
-                for i in range(int(math.ceil(self.populationSize/2.0))):
+                while len(newPopulation) <= self.populationSize:
 
                     genome1, genome2 = self.selectPair()
 
@@ -137,6 +207,6 @@ class GA(object):
                     newPopulation.append(self.mutate(genome1))
                     newPopulation.append(self.mutate(genome2))
 
-                self.setPopulation(newPopulation)
+                self.population = newPopulation
 
         return self.maxFitness, self.avgFitness
