@@ -105,6 +105,8 @@ class Cube:
             self.clearMoves()
 
 
+
+
     def move(self, side, clockwise=True):
         self.pastMoves += [(side, clockwise)]
 
@@ -115,9 +117,9 @@ class Cube:
 
             if clockwise==True:
                 print "moving front clockwise..."
-                hold = self.right.getColumn(0)
+                hold = self.right.getColumn(0)[::-1]
                 self.right.setColumn(0, self.up.getRow(2))
-                self.up.setRow(2, self.left.getColumn(2))
+                self.up.setRow(2, self.left.getColumn(2)[::-1])
                 self.left.setColumn(2, self.down.getRow(0))
                 self.down.setRow(0,hold)
 
@@ -125,9 +127,9 @@ class Cube:
 
             else:
                 print "moving front counter-clockwise..."
-                hold = self.left.getColumn(2)
+                hold = self.left.getColumn(2)[::-1]
                 self.left.setColumn(2, self.up.getRow(2))
-                self.up.setRow(2, self.right.getColumn(0))
+                self.up.setRow(2, self.right.getColumn(0)[::-1])
                 self.right.setColumn(0, self.down.getRow(0))
                 self.down.setRow(0, hold)
 
@@ -136,16 +138,16 @@ class Cube:
 
             if clockwise==True:
                 print "moving back clockwise..."
-                hold = self.right.getColumn(2)
+                hold = self.right.getColumn(2)[::-1]
                 self.right.setColumn(2,self.down.getRow(2))
-                self.down.setRow(2, self.left.getColumn(0))
+                self.down.setRow(2, self.left.getColumn(0)[::-1])
                 self.left.setColumn(0,self.up.getRow(0))
                 self.up.setRow(0,hold)
             else:
                 print "moving back counter-clockwise"
-                hold = self.left.getColumn(0)
+                hold = self.left.getColumn(0)[::-1]
                 self.left.setColumn(0,self.down.getRow(2))
-                self.down.setRow(2, self.right.getColumn(2))
+                self.down.setRow(2, self.right.getColumn(2)[::-1])
                 self.right.setColumn(2,self.up.getRow(0))
                 self.up.setRow(0,hold)
 
@@ -154,7 +156,7 @@ class Cube:
             if clockwise==True:
                 print "moving left clockwise..."
                 hold = self.up.getColumn(0)
-                self.up.setColumn(0,self.back.getColumn(0))
+                self.up.setColumn(0,self.back.getColumn(0)[::-1])
                 self.back.setColumn(0,self.down.getColumn(0))
                 self.down.setColumn(0, self.front.getColumn(0))
                 self.front.setColumn(0,hold)
@@ -171,7 +173,7 @@ class Cube:
             if clockwise==True:
                 print "moving right clockwise..."
                 hold = self.down.getColumn(2)
-                self.down.setColumn(2,self.back.getColumn(2))
+                self.down.setColumn(2,self.back.getColumn(2)[::-1])
                 self.back.setColumn(2,self.up.getColumn(2))
                 self.up.setColumn(2,self.front.getColumn(2))
                 self.front.setColumn(2,hold)
