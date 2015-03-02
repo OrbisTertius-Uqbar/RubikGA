@@ -1,4 +1,4 @@
-from gp import GP
+from gp import GP, Genome
 
 class One(Genome):
     childCount = 1

@@ -9,14 +9,21 @@ cubeSize = math.floor(math.sqrt((canvasSize ** 2) / 2)) * 2
 def setup():
     size(canvasSize, canvasSize, OPENGL)
 
-
 def drawFace(f):
     x, y = (0, 0)
+
     for row in range(3):
         for col in range(3):
-            fill( getColor( f.face[row][col] ) )
+            fill( getColor( c.colorForTile( f.tile(row, col) ) ) )
             rect(x, y, cubeSize / 3., cubeSize / 3.)
+
+            fill(0)
+            textSize(70)
+            textAlign(LEFT, TOP)
+            text(str(f.tile(row, col)), x, y)
+
             x += cubeSize / 3.
+
         x = 0
         y += cubeSize / 3.
 
@@ -87,8 +94,8 @@ def draw():
 
     # back
     pushMatrix()
-    translate(0, 0, -cubeSize)
-    rotateX(TWO_PI)
+    translate(0, cubeSize, -cubeSize)
+    rotateX(PI)
     drawFace(c.back)
     popMatrix()
 
@@ -150,7 +157,7 @@ def keyPressed():
         # Otherwise...
 
         if key == "s":
-            c.scrambleCube(50)
+            c.scramble(50)
 
-        elif  key == "c":
-            c.solveCube()
+        elif key == "c":
+            c.solve()
