@@ -1,4 +1,4 @@
-import random
+import random, copy
 
 class Face:
 
@@ -120,6 +120,21 @@ class Cube:
          +     '\nLeft: \n' + str(self.left)    + '\n' \
          +     '\nRight:\n' + str(self.right)   + '\n'
 
+    def __eq__(self,other):
+        return str(self) == str(other)
+
+    def copy(self):
+        return copy.deepcopy(self)
+
+    def entropy(self):
+        e = 0
+        for side, face in self.sides.iteritems():
+            for row in range(3):
+                for col in range(3):
+                    # e +=  not (face.face[row][col][0] == side)
+                    e += not ((side, row, col) == face.tile(row, col))
+        return e
+
 
     def clearMoves(self):
         self.pastMoves = []
@@ -145,6 +160,10 @@ class Cube:
 
     def colorForTile(self, tile):
         return self.colors[tile[0]]
+
+    def moveSequence(self,moves):
+        for m, d in moves:
+            self.move(m, d)
 
 
     def move(self, side, clockwise=True):

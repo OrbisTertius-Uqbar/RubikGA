@@ -118,7 +118,7 @@ class TestCube(unittest.TestCase):
             'scramble did not change the cube')
         cube.solve()
         self.assertEqual(str(cube), strRep,
-            'scramble/solve are not mutually symmetrical')
+            'scramble/solve are not symmetric operations')
 
     def test_moveSymmetry(self):
         sides = [
@@ -140,4 +140,4 @@ class TestCube(unittest.TestCase):
                 cube.move(f, False)
 
                 self.assertEqual(strRep, str(cube),
-                    n + ' movement is assymetrical')
+                    n + ' movement is assymetric')

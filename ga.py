@@ -33,6 +33,7 @@ class GA(object):
     _elite = None
 
 
+
     # Helpers
 
     def _weightedChoice(self, elements, weights):
@@ -50,15 +51,15 @@ class GA(object):
         return random.choice(elements)
 
 
-    def randomGenome(self, length=0):
+    def randomGenome(self, len=0):
 
-        if length == 0:
-            length = self.genomeLength
+        if len == 0:
+            len = self.genomeLength
 
-        if length == 1:
-            return random.choice(self.alphabet)
+        if len == 1:
+            return [random.choice(self.alphabet)]
         else:
-            return random.choice(self.alphabet) + self.randomGenome(length - 1)
+            return [random.choice(self.alphabet)] + self.randomGenome(len - 1)
 
 
     def crossover(self, genome1, genome2):
@@ -72,11 +73,11 @@ class GA(object):
 
     def mutate(self, genome):
 
-        return ''.join([
+        return [
             (random.choice([char for char in self.alphabet if char != cur])
                 if random.uniform(0, 1) < self.mutationRate else cur)
             for cur in genome
-        ])
+        ]
 
 
     def selectPair(self):
@@ -161,7 +162,6 @@ class GA(object):
 
 
     def genomeForFitness(self, fitness):
-
         try:
             return self.population[self.fitnesses.index(fitness)]
         except ValueError:
