@@ -1,7 +1,8 @@
 from rubiksCube import Cube
 import math
 
-c = Cube()
+SIZE = 2
+c = Cube(SIZE)
 
 canvasSize = 600
 cubeSize = math.floor(math.sqrt((canvasSize ** 2) / 2)) * 2
@@ -12,20 +13,20 @@ def setup():
 def drawFace(f):
     x, y = (0, 0)
 
-    for row in range(3):
-        for col in range(3):
+    for row in range(SIZE):
+        for col in range(SIZE):
             fill( getColor( c.colorForTile( f.tile(row, col) ) ) )
-            rect(x, y, cubeSize / 3., cubeSize / 3.)
+            rect(x, y, cubeSize / float(SIZE), cubeSize / float(SIZE))
 
             fill(0)
             textSize(70)
             textAlign(LEFT, TOP)
             text(str(f.tile(row, col)), x, y)
 
-            x += cubeSize / 3.
+            x += cubeSize / float(SIZE)
 
         x = 0
-        y += cubeSize / 3.
+        y += cubeSize / float(SIZE)
 
 # Converts Cube.COLOR to processing color
 def getColor(c):
