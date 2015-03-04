@@ -1,5 +1,4 @@
-import random
-import math
+import random, math
 
 class GA(object):
 
@@ -31,7 +30,6 @@ class GA(object):
 
     _populationByFitness = None
     _elite = None
-
 
 
     # Helpers

@@ -2,7 +2,7 @@ import random, copy
 
 class Face:
 
-    def __init__(self, n, size):
+    def __init__(self, n, size=3):
         self.size = size
         self.face = [[(n, r, c) for c in range(size)] for r in range(size)]
 
@@ -12,32 +12,33 @@ class Face:
     def col(self, col):
         return [self.face[row][col] for row in range(self.size)]
 
-    def row(self, row, normalization=(0, 0, 0)):
-        rowsToCols, invert, reverse = normalization
-        i = row if not invert else 0 if row == self.size-1 else self.size-1 if row == 0 else 1
-        r = self.col(i) if rowsToCols else self.face[i]
-        return r[::-1] if reverse else r
-
     def setCol(self, col, newCol):
         for row in range(self.size):
             self.face[row][col] = newCol[row]
 
+    def row(self, row, normalization=(0, 0, 0)):
+        rowsToCols, invert, reverse = normalization
+        i = self._invertIndex(row) if invert else row
+        r = self.col(i) if rowsToCols else self.face[i]
+        return r[::-1] if reverse else r
+
     def setRow(self, row, newRow, normalization=(0, 0, 0)):
         rowsToCols, invert, reverse = normalization
-        i = row if not invert else 0 if row == self.size-1 else self.size-1 if row == 0 else 1
+        i = self._invertIndex(row) if invert else row
         newRow = newRow[::-1] if reverse else newRow
         if rowsToCols:
             self.setCol(i, newRow)
         else:
             self.face[i] = newRow
 
+    def _invertIndex(self, i):
+        return 0 if i == self.size - 1 else self.size - 1 if i == 0 else 1
+
     def rotate(self, clockwise=True):
         if clockwise == True:
-            self.face = [
-                self.col(0)[::-1], self.col(1)[::-1], self.col(self.size-1)[::-1]
-            ]
+            self.face = [self.col(c)[::-1] for c in range(self.size)]
         else:
-            self.face = [self.col(self.size-1), self.col(1), self.col(0)]
+            self.face = [self.col(c) for c in range(self.size)][::-1]
 
     def __repr__(self):
         s = ''
@@ -133,7 +134,6 @@ class Cube:
         for side, face in self.sides.iteritems():
             for row in range(self.size):
                 for col in range(self.size):
-                    # e +=  not (face.face[row][col][0] == side)
                     e += not ((side, row, col) == face.tile(row, col))
         return e
 

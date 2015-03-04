@@ -5,40 +5,44 @@ import unittest, rubiksCube, copy
 class TestFace(unittest.TestCase):
 
     def test_faceInit(self):
-        face1 = rubiksCube.Face(1)
-        face4 = rubiksCube.Face(4)
-        self.assertEqual(face1.face,[
+        self.assertEqual(rubiksCube.Face(1).face,[
             [(1, 0, 0), (1, 0, 1), (1, 0, 2)],
             [(1, 1, 0), (1, 1, 1), (1, 1, 2)],
             [(1, 2, 0), (1, 2, 1), (1, 2, 2)]
         ], 'face #1 incorrectly initialized')
-        self.assertEqual(face4.face,[
+        self.assertEqual(rubiksCube.Face(4).face,[
             [(4, 0, 0), (4, 0, 1), (4, 0, 2)],
             [(4, 1, 0), (4, 1, 1), (4, 1, 2)],
             [(4, 2, 0), (4, 2, 1), (4, 2, 2)]
         ], 'face #4 incorrectly initialized')
+        self.assertEqual(rubiksCube.Face(0, 2).face,[
+            [(0, 0, 0), (0, 0, 1)],
+            [(0, 1, 0), (0, 1, 1)]
+        ], 'size 2 face incorrectly initialized')
+
 
     def test_faceColRow(self):
-        face = rubiksCube.Face(0)
+        for size in [3, 2]:
+            ssize = str(size)
+            face = rubiksCube.Face(0, size)
+            self.assertEqual(
+                face.row(1),
+                [(0, 1, 0), (0, 1, 1), (0, 1, 2)][:size],
+                'face.row returned unexpected value with size ' + ssize
+            )
+            self.assertEqual(
+                face.col(1),
+                [(0, 0, 1), (0, 1, 1), (0, 2, 1)][:size],
+                'face.col returned unexpected value with size ' + ssize
+            )
+            new = [0, 1, 2][:size]
+            face.setRow(0, new)
+            self.assertEqual(new, face.row(0),
+                'face.setRow did not work properly with size ' + ssize)
+            face.setCol(0, new)
+            self.assertEqual(new, face.col(0),
+                'face.setCol did not work properly with size ' + ssize)
 
-        self.assertEqual(
-            face.row(1),
-            [(0, 1, 0), (0, 1, 1), (0, 1, 2)],
-            'face.row returned unexpected value for row'
-        )
-        self.assertEqual(
-            face.col(1),
-            [(0, 0, 1), (0, 1, 1), (0, 2, 1)],
-            'face.col returned unexpected value for column'
-        )
-
-        new = [0, 1, 2]
-        face.setRow(0, new)
-        self.assertEqual(new, face.row(0),
-            'face.setRow did not work properly')
-        face.setCol(0, new)
-        self.assertEqual(new, face.col(0),
-            'face.setCol did not work properly')
 
     def test_rowNormalizations(self):
         face = rubiksCube.Face(0)
@@ -80,13 +84,25 @@ class TestFace(unittest.TestCase):
             [(1, 2, 0), (1, 1, 0), (1, 0, 0)],
             [(1, 2, 1), (1, 1, 1), (1, 0, 1)],
             [(1, 2, 2), (1, 1, 2), (1, 0, 2)]
-        ], 'face not rotating')
+        ], 'face not rotating with size 3')
         face.rotate(False)
         self.assertEqual(face.face,[
             [(1, 0, 0), (1, 0, 1), (1, 0, 2)],
             [(1, 1, 0), (1, 1, 1), (1, 1, 2)],
             [(1, 2, 0), (1, 2, 1), (1, 2, 2)]
-        ], 'face rotation is not symmetrical')
+        ], 'face rotation is not symmetrical with size 3')
+
+        face = rubiksCube.Face(1, 2)
+        face.rotate()
+        self.assertEqual(face.face,[
+            [(1, 1, 0), (1, 0, 0)],
+            [(1, 1, 1), (1, 0, 1)]
+        ], 'face not rotating with size 2')
+        face.rotate(False)
+        self.assertEqual(face.face,[
+            [(1, 0, 0), (1, 0, 1)],
+            [(1, 1, 0), (1, 1, 1)]
+        ], 'face rotation is not symmetrical with size 2')
 
     def test_faceRepr(self):
         self.assertEqual(
@@ -94,7 +110,13 @@ class TestFace(unittest.TestCase):
             '''[(1, 0, 0), (1, 0, 1), (1, 0, 2)],
 [(1, 1, 0), (1, 1, 1), (1, 1, 2)],
 [(1, 2, 0), (1, 2, 1), (1, 2, 2)]''',
-            'face has wrong string representation'
+            'face has wrong string representation with size 3'
+        )
+
+        self.assertEqual(
+            str(rubiksCube.Face(1, 2)),
+            '[(1, 0, 0), (1, 0, 1)],\n[(1, 1, 0), (1, 1, 1)]',
+            'face has wrong string representation with size 2'
         )
 
 
@@ -109,16 +131,18 @@ class TestCube(unittest.TestCase):
         )
 
     def test_scrambleSolve(self):
-        cube = rubiksCube.Cube()
-        strRep = str(cube)
-        cube.scramble(50)
-        self.assertEqual(len(cube.pastMoves), 50,
-            'scramble performed an incorrrect amount of moves')
-        self.assertNotEqual(str(cube), strRep,
-            'scramble did not change the cube')
-        cube.solve()
-        self.assertEqual(str(cube), strRep,
-            'scramble/solve are not symmetric operations')
+        for size in [2, 3]:
+            ssize = str(size)
+            cube = rubiksCube.Cube(size)
+            strRep = str(cube)
+            cube.scramble(50)
+            self.assertEqual(len(cube.pastMoves), 50,
+                'scramble performed wrong amount of moves with size ' + ssize)
+            self.assertNotEqual(str(cube), strRep,
+                'scramble did not change the cube with size ' + ssize)
+            cube.solve()
+            self.assertEqual(str(cube), strRep,
+                'scramble/solve are asymmetric with size ' + ssize)
 
     def test_moveSymmetry(self):
         sides = [
@@ -130,14 +154,15 @@ class TestCube(unittest.TestCase):
             ('right', rubiksCube.Cube.SIDE_RIGHT)
         ]
 
-        for n, f in sides:
-            for i in range(10):
-                cube = rubiksCube.Cube()
-                cube.scramble(50)
-                strRep = str(cube)
+        for size in [2, 3]:
+            for n, f in sides:
+                for i in range(10):
+                    cube = rubiksCube.Cube(size)
+                    cube.scramble(50)
+                    strRep = str(cube)
 
-                cube.move(f, True)
-                cube.move(f, False)
+                    cube.move(f, True)
+                    cube.move(f, False)
 
-                self.assertEqual(strRep, str(cube),
-                    n + ' movement is assymetric')
+                    self.assertEqual(strRep, str(cube),
+                        n + ' movement is assymetric with size ' + str(size))
