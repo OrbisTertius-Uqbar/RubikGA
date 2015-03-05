@@ -10,12 +10,12 @@ class GA(object):
 
     # Config
 
-    alphabet = ["0", "1"]
+    alphabet = ['0', '1']
     genomeLength = 20
     crossoverRate = 1.0
     mutationRate = 0.005
     populationSize = 100
-    fitnessFunciton = lambda genome: 0
+    fitnessFunction = lambda ga, genome: 0
     selectionMethod = SELECTION_RANK
     elitism = 0
 
@@ -195,7 +195,7 @@ class GA(object):
 
                 newPopulation = [g for g in self.elite]
 
-                while len(newPopulation) <= self.populationSize:
+                while len(newPopulation) < self.populationSize:
 
                     genome1, genome2 = self.selectPair()
 
