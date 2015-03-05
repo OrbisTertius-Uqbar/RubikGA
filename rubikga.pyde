@@ -1,5 +1,5 @@
 from rubiksCube import Cube
-import math
+import math, time
 
 SIZE = 2
 c = Cube(SIZE)
@@ -150,6 +150,7 @@ def keyPressed():
             side = Cube.SIDE_DOWN
             clockwise = False
 
+
         if side != None:
             c.move(side, clockwise)
             return
@@ -162,3 +163,16 @@ def keyPressed():
 
         elif key == "c":
             c.solve()
+
+        elif key == "Q":
+          c.moveSequence([(1, False), (0, False), (1, False), (5, False),
+          (3, True), (0, True), (0, True), (1, False), (1, False), (3, False),
+          (5, False), (5, False), (4, True), (3, True), (1, True), (4, True),
+          (2, True), (0, False), (2, False), (0, False)])
+
+          solution = [(0, 0), (3, 0), (3, 0), (5, 0), (4, 0), (0, 0), (3, 1),
+
+          (3, 0), (5, 1), (4, 0), (0, 1), (3, 1)]
+          for m,d  in solution:
+            c.move(m,d)
+            time.sleep(1)
