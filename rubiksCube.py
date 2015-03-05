@@ -83,6 +83,17 @@ class Face:
                 else:current = 0
             score += current
 
+        ## Shortened version?
+        # for method in [self.row, self.col]:
+        #     for i in range(self.size):
+        #         l = method(i)
+        #         for t in range(self.size):
+        #             prevColor = None if t == 0 else l[t - 1][0]
+        #             nextColor = None if t == self.size - 1 else l[t + 1][0]
+        #             curColor = l[t][0]
+        #             if (curColor == prevColor) or (curColor == nextColor):
+        #                 score += self.cWeights[l[t][1]][l[t][2]]
+
         return score
 
 
