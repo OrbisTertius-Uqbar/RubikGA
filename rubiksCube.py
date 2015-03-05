@@ -6,6 +6,12 @@ class Face:
         self.size = size
         self.face = [[(n, r, c) for c in range(size)] for r in range(size)]
 
+        if size == 3:
+            self.cWeights = [[1,2,1], [2,3,2], [1,2,1]]
+        else:
+            self.cWeights = [[1 for i in range(size)] for i in range(size)]
+
+
     def tile(self, row, col):
         return self.face[row][col]
 
@@ -48,6 +54,38 @@ class Face:
                 s += str(self.face[row][col]) + ', '
             s = s[:-2] + '],\n'
         return s[:-2]
+
+    def clusterMetric(self):
+        score = 0
+        for r in range(self.size):
+            row = self.row(r)
+            current = None
+            for t in range(self.size-1):
+                tileC = row[t]
+                tileN = row[t+1]
+                if current == None:
+                    current = self.cWeights[tileC[1]][tileC[2]]
+                if tileC[0] == tileN[0]:
+                    current += self.cWeights[tileN[1]][tileN[2]]
+                else:current = 0
+            score += current
+
+        for c in range(self.size):
+            col = self.col(c)
+            current = None
+            for t in range(self.size-1):
+                tileC = col[t]
+                tileN = col[t+1]
+                if current == None:
+                    current = self.cWeights[tileC[1]][tileC[2]]
+                if tileC[0] == tileN[0]:
+                    current += self.cWeights[tileN[1]][tileN[2]]
+                else:current = 0
+            score += current
+
+        return score
+
+
 
 
 class Cube:
@@ -114,6 +152,7 @@ class Cube:
         self.pastMoves = []
 
 
+
     def __repr__(self):
         return '\n' \
          +     '\nFront:\n' + str(self.front)   + '\n' \
@@ -137,6 +176,11 @@ class Cube:
                     e += not ((side, row, col) == face.tile(row, col))
         return e
 
+    def clusterMetric(self):
+        score = 0
+        for side, face in self.sides.iteritems():
+            score += face.clusterMetric()
+        return score
 
     def clearMoves(self):
         self.pastMoves = []
