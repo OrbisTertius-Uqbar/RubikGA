@@ -62,6 +62,9 @@ class GA(object):
 
     def crossover(self, genome1, genome2):
 
+        if random.uniform(0, 1) >= self.crossoverRate:
+            return genome1, genome2
+
         crossoverPoint = random.randrange(1, len(genome1))
         return (
             genome1[:crossoverPoint] + genome2[crossoverPoint:],
@@ -198,9 +201,7 @@ class GA(object):
                 while len(newPopulation) < self.populationSize:
 
                     genome1, genome2 = self.selectPair()
-
-                    if random.uniform(0, 1) < self.crossoverRate:
-                        genome1, genome2 = self.crossover(genome1, genome2)
+                    genome1, genome2 = self.crossover(genome1, genome2)
 
                     newPopulation.append(self.mutate(genome1))
                     newPopulation.append(self.mutate(genome2))

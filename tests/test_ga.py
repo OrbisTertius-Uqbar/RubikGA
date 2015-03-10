@@ -111,17 +111,40 @@ class TestGA(unittest.TestCase):
         self.ga.selectionMethod = GA.SELECTION_ROULETTE
 
     def test_crossover(self):
+        self.ga.alphabet = list(
+            '01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        )
+        self.ga.genomeLength = 200
         self.ga.useRandomPopulation()
 
-        for trial in range(100):
-            a , b  = self.ga.selectPair()
-            a1, b1 = self.ga.crossover(a, b)
-            success = False
-            for i in range(1, len(a)):
-                if a1 == a[:i] + b[i:] and b1 == b[:i] + a[i:] \
-                or a1 == b[:i] + a[i:] and b1 == a[:i] + b[i:]:
-                    success = True
-            self.assertTrue(success, 'crossover not working as expected')
+        for cRate in [0, 0.01, 0.1, 0.3, 0.5, 0.75, 1]:
+            self.ga.crossoverRate = cRate
+
+            trials = 1000
+            crossed = 0
+            for trial in range(trials):
+                a , b  = self.ga.selectPair()
+                a1, b1 = self.ga.crossover(a, b)
+
+                if a1 != a or b1 != b:
+                    for i in range(1, len(a)):
+                        if a1 == a[:i] + b[i:] and b1 == b[:i] + a[i:] \
+                        or a1 == b[:i] + a[i:] and b1 == a[:i] + b[i:]:
+                            crossed += 1
+                            break
+
+            ''' Sometimes the crossover rate test is off because occasionally
+                crossover has no effect '''
+
+            errorMargin = .05 if cRate > 0 else 0
+            testedProb = float(crossed) / trials
+            self.assertLessEqual(abs(cRate - testedProb), errorMargin,
+                'crossed-over with probablity of %.4f, expected %.4f'
+                % (testedProb, cRate))
+
+        self.ga.alphabet = ['0', '1']
+        self.ga.genomeLength = 20
+        self.ga.crossoverRate = 1
 
     def test_mutation(self):
         for mRate in [0, 0.001, 0.01, 0.1, 0.005, 0.25, 1]:
@@ -135,7 +158,7 @@ class TestGA(unittest.TestCase):
                 for i in range(len(g)):
                     if g[i] != m[i]: mutatedChars += 1
 
-            errorMargin = .005 if mRate > 0 else 1 if mRate == 1 else 0
+            errorMargin = .005 if mRate > 0 and mRate < 1 else 0
             testedProb = mutatedChars / totalChars
             self.assertLessEqual(abs(mRate - testedProb), errorMargin,
                 'mutated with probablity of %.4f, expected %.4f'
