@@ -1,7 +1,8 @@
 from rubiksCube import Cube
-import math, time
+import math
+import time
 
-SIZE = 2
+SIZE = 3
 c = Cube(SIZE)
 
 canvasSize = 600
@@ -15,7 +16,7 @@ def drawFace(f):
 
     for row in range(SIZE):
         for col in range(SIZE):
-            fill( getColor( c.colorForTile( f.tile(row, col) ) ) )
+            fill(getColor(c.colorForTile(f.tile(row, col))))
             rect(x, y, cubeSize / float(SIZE), cubeSize / float(SIZE))
 
             fill(0)
@@ -105,74 +106,80 @@ def draw():
 
 def keyPressed():
 
-        clockwise = True
-        side = None
+    clockwise = True
+    side = None
 
-        if  key == "f":
-            side = Cube.SIDE_FRONT
+    if key == "f":
+        side = Cube.SIDE_FRONT
 
-        elif  key == "F":
-            side = Cube.SIDE_FRONT
-            clockwise = False
+    elif key == "F":
+        side = Cube.SIDE_FRONT
+        clockwise = False
 
-        elif key == "b":
-            side = Cube.SIDE_BACK
+    elif key == "b":
+        side = Cube.SIDE_BACK
 
-        elif key == "B":
-            side = Cube.SIDE_BACK
-            clockwise = False
+    elif key == "B":
+        side = Cube.SIDE_BACK
+        clockwise = False
 
-        elif key == "l":
-            side = Cube.SIDE_LEFT
+    elif key == "l":
+        side = Cube.SIDE_LEFT
 
-        elif key == "L":
-            side = Cube.SIDE_LEFT
-            clockwise = False
+    elif key == "L":
+        side = Cube.SIDE_LEFT
+        clockwise = False
 
-        elif key == "r":
-            side = Cube.SIDE_RIGHT
+    elif key == "r":
+        side = Cube.SIDE_RIGHT
 
-        elif key == "R":
-            side = Cube.SIDE_RIGHT
-            clockwise = False
+    elif key == "R":
+        side = Cube.SIDE_RIGHT
+        clockwise = False
 
-        elif key == "u" or key == "t":
-            side = Cube.SIDE_UP
+    elif key == "u" or key == "t":
+        side = Cube.SIDE_UP
 
-        elif key == "U" or key == "T":
-            side = Cube.SIDE_UP
-            clockwise = False
+    elif key == "U" or key == "T":
+        side = Cube.SIDE_UP
+        clockwise = False
 
-        elif key == "d":
-            side = Cube.SIDE_DOWN
+    elif key == "d":
+        side = Cube.SIDE_DOWN
 
-        elif key == "D":
-            side = Cube.SIDE_DOWN
-            clockwise = False
+    elif key == "D":
+        side = Cube.SIDE_DOWN
+        clockwise = False
 
+    if side != None:
+        c.move(side, clockwise)
+        return
 
-        if side != None:
-            c.move(side, clockwise)
-            return
+    # Otherwise...
 
+    if key == "s":
+        c.scramble(50)
 
-        # Otherwise...
+    elif key == "c":
+        c.solve()
 
-        if key == "s":
-            c.scramble(50)
+    elif key == "q":
+        if SIZE == 2:
+            c.moveSequence([(1, False), (0, False), (1, False), (5, False),
+                            (3, True), (0, True), (0, True), (1,
+                                                              False), (1, False), (3, False),
+                            (5, False), (5, False), (4, True), (3,
+                                                                True), (1, True), (4, True),
+                            (2, True), (0, False), (2, False), (0, False)])
+            # redraw()
 
-        elif key == "c":
-            c.solve()
+    elif key == "Q":
+        if SIZE == 2:
+            solution = [(0, 1), (5, 0), (0, 1), (2, 0), (0, 0),
+                        (2, 1), (5, 1), (1, 1), (5, 0), (0, 0), (4, 0), (1, 1)]
 
-        elif key == "Q":
-          c.moveSequence([(1, False), (0, False), (1, False), (5, False),
-          (3, True), (0, True), (0, True), (1, False), (1, False), (3, False),
-          (5, False), (5, False), (4, True), (3, True), (1, True), (4, True),
-          (2, True), (0, False), (2, False), (0, False)])
+            for m, d in solution:
+                c.move(m, d)
+                time.sleep(.2)
+                redraw()
 
-          solution = [(0, 0), (3, 0), (3, 0), (5, 0), (4, 0), (0, 0), (3, 1),
-
-          (3, 0), (5, 1), (4, 0), (0, 1), (3, 1)]
-          for m,d  in solution:
-            c.move(m,d)
-            time.sleep(1)

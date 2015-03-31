@@ -9,6 +9,17 @@ cube.moveSequence([(3, True), (2, False), (4, True),
 (4, False), (2, True), (0, False), (0, True), (3, True)])
 #print "init entropy: ", -cube.entropy()
 
+def getBest(list):
+    best = None
+    score = 0
+    for g in list:
+        f = entropicFitness2(g)
+        if f > score:
+            best = g
+            score = f
+        elif f == score:
+            pass
+    return best
 
 def entropicFitness(genome):
     c = cube.copy()
@@ -30,7 +41,7 @@ def clusterFitness(genome):
         if score == 180: break
     return score
 
-
+'''
 ga = GA()
 ga.alphabet = [(face, dir) for face in range(6) for dir in range(2)]
 ga.genomeLength = 30
@@ -41,15 +52,22 @@ ga.elitism = .005
 
 f = open("gaRun.txt", "w")
 
-'''
+
 for gen in range(1000):
     max, avg = ga.run()
     print gen, max, avg
     f.write("%d %d %.2f \n" %(gen, max,avg))
-f.write("%s" %ga.populationByFitness[-1])
-'''
+
+
+gnomes = ga2.population
+bestGnome = getBest(gnomes)
+f.write("%s" %bestGnome)
 f.close()
 
+print bestGnome
+
+
+'''
 ################################################################################
 ################################################################################
 ################################################################################
@@ -91,15 +109,24 @@ ga2.alphabet = [(face, dir) for face in range(6) for dir in range(2)]
 ga2.genomeLength = 12
 ga2.populationSize = 750
 ga2.mutationRate = .01
-ga2.fitnessFunction = clusterFitness2
+ga2.fitnessFunction = entropicFitness2
 ga2.elitism = .005
 
-for gen in range(50):
+for gen in range(25):
     max, avg = ga2.run()
     print gen, max, avg
     f.write("%d %d %.2f \n" %(gen, max,avg))
     #if max == 42: break
-f.write("%s" %ga2.populationByFitness[-1])
+
+gnomes = ga2.population
 
 
+bestGnome = getBest(gnomes)
+
+
+f.write("%s" %bestGnome)
 f.close()
+print bestGnome
+print "best fitness: ", entropicFitness2(bestGnome)
+print c2.moveSequence(bestGnome)
+print c2
