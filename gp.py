@@ -8,14 +8,12 @@ class Genome:
 
     def __init__(self, children=[]):
         self._children = children
-        for child in children: child._parent = self
 
-    def __deepcopy__(self, memo=None):
-        return self.__class__([copy.deepcopy(c) for c in self._children])
+        for child in children:
+            child._parent = self
 
     def copy(self):
         return copy.deepcopy(self)
-
 
     def getChild(self, i):
         return self._children[i]
@@ -26,7 +24,6 @@ class Genome:
 
     def getParent(self):
         return self._parent
-
 
     def randomSubtree(self):
 
@@ -48,7 +45,6 @@ class Genome:
 
         parent = toReplace.getParent()
         parent.setChild(parent._children.index(toReplace), newSubtree)
-
 
     def __iter__(self):
         return GenomeIterator(self)
