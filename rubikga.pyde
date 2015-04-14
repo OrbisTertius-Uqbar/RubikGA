@@ -184,4 +184,3 @@ def keyPressed():
                 redraw()
     elif key == "!":
         SIZE = 2 if SIZE == 3 else  3
-
