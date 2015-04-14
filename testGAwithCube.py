@@ -133,18 +133,17 @@ print c2
 
 ##evolve sequence
 
-def delta(cube1, cube2):
-    d = 0
-    s1 = cube1.getString()
-    s2 = cube2.getString()
-    for i in range(len(getString())):
-        d+=1 if s1[i]==s2[i] else 0
-    return d
-
 def seqFitness(genome):
     cstart = cube.copy()
     c = cube.copy()
-    fit = 0
-    sign = 1
-    for m,d in genome:
-        c.move(m,d)
+    maxDelta = 48
+    fit = maxDelta + 1
+    for m, d in genome:
+        c.move(m, d)
+
+        if s:
+            fit = min(maxDelta - c.delta(cstart), fit)
+        else:
+            fit = min(c.delta(cstart) - maxDelta, fit)
+
+    return -e
