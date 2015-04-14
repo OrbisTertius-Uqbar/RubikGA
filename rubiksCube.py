@@ -187,6 +187,8 @@ class Cube:
                     e += not ((side, row, col) == face.tile(row, col))
         return e
 
+
+
     def clusterMetric(self):
         score = 0
         for side, face in self.sides.iteritems():
@@ -222,6 +224,13 @@ class Cube:
         for m, d in moves:
             self.move(m, d)
 
+    def getString(self):
+        s = ""
+        for side, face in self.sides.iteritems():
+            for row in range(self.size):
+                for col in range(self.size):
+                    s+=(side, row, col)
+        return s
 
     def move(self, side, clockwise=True):
         self.pastMoves += [(side, clockwise)]

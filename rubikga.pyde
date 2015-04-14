@@ -182,4 +182,6 @@ def keyPressed():
                 c.move(m, d)
                 time.sleep(.2)
                 redraw()
+    elif key == "!":
+        SIZE = 2 if SIZE == 3 else  3
 

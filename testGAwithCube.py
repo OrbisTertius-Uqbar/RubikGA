@@ -130,3 +130,21 @@ print bestGnome
 print "best fitness: ", entropicFitness2(bestGnome)
 print c2.moveSequence(bestGnome)
 print c2
+
+##evolve sequence
+
+def delta(cube1, cube2):
+    d = 0
+    s1 = cube1.getString()
+    s2 = cube2.getString()
+    for i in range(len(getString())):
+        d+=1 if s1[i]==s2[i] else 0
+    return d
+
+def seqFitness(genome):
+    cstart = cube.copy()
+    c = cube.copy()
+    fit = 0
+    sign = 1
+    for m,d in genome:
+        c.move(m,d)
