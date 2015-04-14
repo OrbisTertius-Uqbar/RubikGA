@@ -180,14 +180,15 @@ class Cube:
         return copy.deepcopy(self)
 
     def entropy(self):
-        e = 0
+        return self.delta(Cube(self.size))
+
+    def delta(self, cube2):
+        d = 0
         for side, face in self.sides.iteritems():
             for row in range(self.size):
                 for col in range(self.size):
-                    e += not ((side, row, col) == face.tile(row, col))
-        return e
-
-
+                    d += not (cube2.tile(side, row, col) == face.tile(row, col))
+        return d
 
     def clusterMetric(self):
         score = 0
@@ -216,6 +217,8 @@ class Cube:
             self.move(side, not direction)
             self.clearMoves()
 
+    def tile(self, face, row, col):
+        return self.sides[face].tile(row, col)
 
     def colorForTile(self, tile):
         return self.colors[tile[0]]
@@ -224,13 +227,13 @@ class Cube:
         for m, d in moves:
             self.move(m, d)
 
-    def getString(self):
-        s = ""
-        for side, face in self.sides.iteritems():
-            for row in range(self.size):
-                for col in range(self.size):
-                    s+=(side, row, col)
-        return s
+    # def getString(self):
+    #     s = ""
+    #     for side, face in self.sides.iteritems():
+    #         for row in range(self.size):
+    #             for col in range(self.size):
+    #                 s+=(side, row, col)
+    #     return s
 
     def move(self, side, clockwise=True):
         self.pastMoves += [(side, clockwise)]

@@ -54,6 +54,11 @@ def draw():
 
     rectMode(CORNER)
 
+    fill(255)
+    textSize(100)
+    textAlign(LEFT, TOP)
+    text("Entropy: " + str(c.entropy()), 0, 0)
+
     halfCubeSize = cubeSize / 2
 
     translate(canvasSize / 2, canvasSize / 2, -1.3 * cubeSize)
