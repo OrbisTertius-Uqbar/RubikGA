@@ -1,0 +1,91 @@
+\documentclass[12]{article}
+\title{Rubik's Cube Project }
+\usepackage{pgfplotstable}
+\usepackage{pgfplots}
+\author{Cameron Rudd \& Avinoam Henig}
+\usepackage{amsmath, fullpage, setspace}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=python,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\doublespace
+
+\begin{document} 
+\maketitle
+
+\paragraph{} Our initial project idea was to develop a genetic program that could solve arbitrary Rubik's cubes. To do this, we wanted to use genetic algorithms to find sequences of moves that solved sub problems (for example, building a cross on one face of the cube). These sub problem solutions would then be used as components in a genetic program. We hoped that this genetic program would be able to solve any Rubik's cube. Unfortunately our lofty goal was not realized, and eventually we switched projects and focused on evolutionary reinforced learning.
+\paragraph{}We built a computer model of a Rubik's cube (which could represent both a $2\times2\times 2$ cube and a $3\times3\times3$ cube) as well as genetic algorithm and genetic program classes that could take arbitrary input. Graphics were implements use pyprocessing, a version of processing (which is implemented in Java) that uses jython to interpret python code. 
+\paragraph{} During the development of our GA, we came up with two fitness functions: entropic fitness and cluster fitness. Entropic fitness measured how many cube faces were in the incorrect position. The following code snippet outlines the computation of entropic fitness.\\
+\begin{lstlisting}
+    def entropy(self):
+        e = 0
+        for side, face in self.sides.iteritems():
+            for row in range(self.size):
+                for col in range(self.size):
+                    e += not ((side, row, col) == face.tile(row, col))
+        return e
+\end{lstlisting}
+When applied to a scrambled $2\times 2 \times 2$ cube, the entropic fitness GA was able to find a solution in roughly seventy moves. 
+
+\paragraph{} Our clustering fitness algorithm was more advanced. When applied to the $2\times2\times2$ cube, the clustering fitness function was able to find a solution to a given configuration after only twenty or so generations. The clustering fitness function gave weights to certain positions on the face of a cube. The algorithm then summed the weights of all touching tiles with matching color. The algorithm is shown in the following code snippet.\\
+
+\begin{lstlisting}
+    def clusterMetric(self):
+        score = 0
+        for r in range(self.size):
+            row = self.row(r)
+            current = None
+            for t in range(self.size-1):
+                tileC = row[t]
+                tileN = row[t+1]
+                if current == None:
+                    current = self.cWeights[tileC[1]][tileC[2]]
+                if tileC[0] == tileN[0]:
+                    current += self.cWeights[tileN[1]][tileN[2]]
+                else:current = 0
+            score += current
+            
+     def clusterMetric(self):
+        score = 0
+        for side, face in self.sides.iteritems():
+            score += face.clusterMetric()
+        return score
+\end{lstlisting}
+
+
+\paragraph{} We did some testing to see whether a basic GA could solve a specific cube. In the run plotted in the following graph we see in blue the best fitness in each generation, in green we see the average fitness. This run used our clustering fitness metric. After 400 generations, the algorithm converged to a suboptimal solution. We saw similar behavior when testing the entropic fitness function. The entropic fitness function generally found worse solutions, however. 
+
+\begin{center}
+\pgfplotstableread{garun.dat}{\pistonkinetics}
+\begin{tikzpicture}[scale=1]
+\begin{axis}[width = 1\textwidth, height = 0.5\textwidth, 
+	minor tick num=1,title=$GP$ Results,
+	xlabel=Generation, xmin = 0, xmax = 1000, 
+	ymin = 0, ylabel = Fitness]
+\addplot [blue, thick] table [x={t}, y={best}] {\pistonkinetics};
+\addplot [green, thick] table [x={t}, y={avg}] {\pistonkinetics};
+\end{axis}
+\end{tikzpicture}
+\end{center}
+\paragraph{}
+We attempted to to develop sequences of moves that could move a piece on the cube to another location while minimizing entropy. We did not have very much success, however, and ultimately decided to move on to the project that became Cruddy Gnome Land.
+\end{document}

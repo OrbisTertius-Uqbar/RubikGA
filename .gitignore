@@ -3,3 +3,7 @@
 **.pyc
 sketch.properties
 *.txt
+*.aux
+*.log
+*.gz
+*.pdf
